@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="My Web Dev Blog - MCA Project">
+  <title>My Blog</title>
+
+  <!-- using Google Fonts to make the site look better -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+
+    /* storing colors here so I don't have to change them in 10 places */
+    :root {
+      --main-color: #2563eb;
+      --dark: #111827;
+      --light-bg: #f3f4f6;
+      --white: #ffffff;
+      --text-gray: #6b7280;
+      --border-color: #e5e7eb;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: var(--light-bg);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    /* ---- HEADER ---- */
+    header {
+      background-color: var(--dark);
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* blue dot after "Blog" just for style */
+    header h1 span {
+      color: var(--main-color);
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+    }
+
+    /* using buttons instead of <a> tags for nav because they trigger JS functions */
+    nav button {
+      background: none;
+      border: 2px solid transparent;
+      color: #d1d5db;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      padding: 6px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    nav button:hover {
+      color: white;
+      border-color: var(--main-color);
+    }
+
+    /* this class is added by JS to highlight the current page button */
+    nav button.active {
+      color: white;
+      border-color: var(--main-color);
+      background-color: var(--main-color);
+    }
+
+    /* ---- HERO SECTION (only on home page) ---- */
+    .hero {
+      background-color: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 70px 20px;
+      border-bottom: 4px solid var(--main-color);
+    }
+
+    .hero h2 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: #9ca3af;
+      font-size: 1rem;
+    }
+
+    /* ---- MAIN CONTENT AREA ---- */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .container h2 {
+      font-size: 1.4rem;
+      margin-bottom: 25px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    /* ---- BLOG CARDS ---- */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background-color: var(--white);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 22px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* small colored tag like "HTML" or "CSS" above the title */
+    .card .tag {
+      display: inline-block;
+      background-color: #eff6ff;
+      color: var(--main-color);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .card p {
+      font-size: 0.88rem;
+      color: var(--text-gray);
+      margin-bottom: 14px;
+    }
+
+    .card a {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--main-color);
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .card a:hover {
+      text-decoration: underline;
+    }
+
+    /* ---- SEARCH BAR (on blogs page) ---- */
+    #search {
+      width: 100%;
+      padding: 11px 15px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      outline: none;
+      margin-bottom: 25px;
+      background-color: var(--white);
+      transition: border-color 0.2s;
+    }
+
+    #search:focus {
+      border-color: var(--main-color);
+    }
+
+    /* ---- SINGLE POST PAGE ---- */
+    .post-wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    /* back button above the post */
+    .back-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.85rem;
+      color: var(--dark);
+      padding: 7px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 25px;
+      display: inline-block;
+      transition: background 0.2s;
+    }
+
+    .back-btn:hover {
+      background-color: var(--border-color);
+    }
+
+    /* the actual blog post content box */
+    .post-box {
+      background-color: var(--white);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 40px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .post-box h1 {
+      font-size: 1.7rem;
+      margin-bottom: 15px;
+    }
+
+    .post-box h2 {
+      font-size: 1.2rem;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    .post-box h3 {
+      font-size: 1rem;
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+
+    .post-box p {
+      color: var(--text-gray);
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+
+    .post-box ul {
+      margin: 8px 0 14px 20px;
+    }
+
+    .post-box li {
+      color: var(--text-gray);
+      font-size: 0.92rem;
+      margin-bottom: 5px;
+    }
+
+    /* code snippets inside post */
+    .post-box pre {
+      background-color: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--main-color);
+      border-radius: 8px;
+      padding: 15px 18px;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      margin: 12px 0 18px;
+    }
+
+    .post-box code {
+      background-color: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    /* ---- SHOW/HIDE PAGES ---- */
+    /* all pages are hidden by default, JS adds 'active' to show one */
+    .page {
+      display: none;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    /* ---- FOOTER ---- */
+    footer {
+      text-align: center;
+      background-color: var(--dark);
+      color: #6b7280;
+      padding: 18px;
+      margin-top: 30px;
+      font-size: 0.85rem;
+    }
+
+    footer span {
+      color: var(--main-color);
+    }
+
+    /* ---- MOBILE RESPONSIVE ---- */
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+
+      .hero h2 {
+        font-size: 1.6rem;
+      }
+
+      .post-box {
+        padding: 25px 18px;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+  <h1>My<span>.</span>Blog</h1>
+  <nav>
+    <button class="active" onclick="showPage('home', this)">Home</button>
+    <button onclick="showPage('blogs', this)">Blogs</button>
+  </nav>
+</header>
+
+
+<!-- HOME PAGE -->
+<section id="home" class="page active">
+
+  <div class="hero">
+    <h2>Welcome to My Blog</h2>
+    <p>Simple guides on Web Development — HTML, CSS and JavaScript</p>
+  </div>
+
+  <div class="container">
+    <h2>Featured Posts</h2>
+    <div class="cards">
+
+      <div class="card">
+        <span class="tag">HTML</span>
+        <h3>HTML Basics</h3>
+        <p>Learn the fundamentals of HTML — tags, structure, headings, links and images.</p>
+        <a onclick="openPost('html')">Read More →</a>
+      </div>
+
+      <div class="card">
+        <span class="tag">CSS</span>
+        <h3>CSS Styling</h3>
+        <p>Understand how CSS works and how to style your web pages with colors and layouts.</p>
+        <a onclick="openPost('css')">Read More →</a>
+      </div>
+
+      <div class="card">
+        <span class="tag">JavaScript</span>
+        <h3>JavaScript Intro</h3>
+        <p>Start learning JavaScript — the language that makes web pages interactive.</p>
+        <a onclick="openPost('js')">Read More →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- BLOGS PAGE -->
+<section id="blogs" class="page">
+  <div class="container">
+    <h2>All Blogs</h2>
+
+    <!-- search filters cards as you type -->
+    <input type="text" id="search" placeholder="Search blogs..." oninput="searchBlogs()">
+
+    <div class="cards" id="blogList">
+
+      <div class="card" data-title="html basics">
+        <span class="tag">HTML</span>
+        <h3>HTML Basics</h3>
+        <p>Introduction to HTML document structure, tags, headings, links and images.</p>
+        <a onclick="openPost('html')">Read More →</a>
+      </div>
+
+      <div class="card" data-title="css basics">
+        <span class="tag">CSS</span>
+        <h3>CSS Basics</h3>
+        <p>CSS styles web pages with colors, layouts, fonts, and design elements.</p>
+        <a onclick="openPost('css')">Read More →</a>
+      </div>
+
+      <div class="card" data-title="javascript basics">
+        <span class="tag">JavaScript</span>
+        <h3>JavaScript Basics</h3>
+        <p>JavaScript adds interactivity and dynamic behavior to web pages.</p>
+        <a onclick="openPost('js')">Read More →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- SINGLE POST PAGE -->
+<section id="post" class="page">
+  <div class="post-wrapper">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <div class="post-box" id="postContent"></div>
+  </div>
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 <span>My Blog</span> | MCA Project</p>
+</footer>
+
+
+<script>
+
+  // this keeps track of which page the user was on before opening a post
+  // so the back button goes to the right place
+  var lastPage = 'home';
+
+  // storing all blog post content in one object
+  // makes it easy to add new posts later - just add a new key
+  var postContent = {
+
+    html: `
+      <h1>🌐 HTML Basics: A Beginner-Friendly Guide with Examples</h1>
+
+      <p>If you're starting web development, HTML is the first thing you need to learn. In this post we'll go through the basic concepts with simple examples.</p>
+
+      <h2>What is HTML?</h2>
+      <p>HTML stands for HyperText Markup Language. It is the standard language used to create web pages. Every website you open in a browser is built using HTML.</p>
+
+      <h2>Basic Structure of an HTML Document</h2>
+      <p>Every HTML file has a standard structure that you should follow:</p>
+
+      <pre>
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+  &lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;My First Page&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+
+    &lt;h1&gt;My First Heading&lt;/h1&gt;
+    &lt;p&gt;My first paragraph.&lt;/p&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;</pre>
+
+      <h3>What each part means:</h3>
+      <ul>
+        <li><strong>&lt;!DOCTYPE html&gt;</strong> - tells the browser we are using HTML5</li>
+        <li><strong>&lt;html&gt;</strong> - the root element, everything goes inside this</li>
+        <li><strong>&lt;head&gt;</strong> - contains page info like title, not visible on screen</li>
+        <li><strong>&lt;body&gt;</strong> - this is where all visible content goes</li>
+        <li><strong>&lt;h1&gt;</strong> - a heading tag</li>
+        <li><strong>&lt;p&gt;</strong> - a paragraph tag</li>
+      </ul>
+
+      <h2>HTML Headings</h2>
+      <p>HTML has 6 levels of headings, from h1 to h6. h1 is the biggest and most important.</p>
+
+      <pre>
+&lt;h1&gt;This is heading 1&lt;/h1&gt;
+&lt;h2&gt;This is heading 2&lt;/h2&gt;
+&lt;h3&gt;This is heading 3&lt;/h3&gt;
+&lt;h6&gt;This is heading 6 (smallest)&lt;/h6&gt;</pre>
+
+      <h2>HTML Paragraphs</h2>
+      <p>Use the &lt;p&gt; tag to write paragraphs. Each &lt;p&gt; tag starts a new paragraph automatically.</p>
+
+      <pre>
+&lt;p&gt;This is my first paragraph.&lt;/p&gt;
+&lt;p&gt;This is another paragraph.&lt;/p&gt;</pre>
+
+      <h2>HTML Links</h2>
+      <p>Links are created using the &lt;a&gt; tag. The href attribute holds the URL.</p>
+
+      <pre>&lt;a href="https://www.google.com"&gt;Click here to open Google&lt;/a&gt;</pre>
+
+      <h2>HTML Images</h2>
+      <p>Images are added using the &lt;img&gt; tag. It does not have a closing tag.</p>
+
+      <pre>&lt;img src="photo.jpg" alt="A photo" width="300"&gt;</pre>
+
+      <ul>
+        <li><strong>src</strong> - path or URL of the image</li>
+        <li><strong>alt</strong> - text shown if image doesn't load (also used by screen readers)</li>
+        <li><strong>width</strong> - sets the width in pixels</li>
+      </ul>
+
+      <h2>How to View HTML Source Code</h2>
+      <ul>
+        <li>Press <strong>Ctrl + U</strong> in your browser</li>
+        <li>Right-click on the page and select View Page Source</li>
+        <li>Right-click and click Inspect to open Developer Tools</li>
+      </ul>
+
+      <h2>Conclusion</h2>
+      <p>HTML is the foundation of every website. Once you understand the basic structure, headings, paragraphs, links and images, you are ready to start building web pages. The next step is learning CSS to style them!</p>
+    `,
+
+    css: `
+      <h1>🎨 CSS Basics: A Beginner-Friendly Guide</h1>
+
+      <p>Once you know HTML, CSS is the next step. CSS is used to control how your HTML looks — the colors, fonts, spacing and layout of your page.</p>
+
+      <h2>What is CSS?</h2>
+      <p>CSS stands for Cascading Style Sheets. It is used to style HTML elements. Without CSS, web pages would look plain and boring — just black text on a white background.</p>
+
+      <h2>Why Use CSS?</h2>
+      <ul>
+        <li>Makes web pages look attractive</li>
+        <li>Helps in creating responsive layouts for mobile and desktop</li>
+        <li>Lets you apply the same style to multiple pages</li>
+        <li>Separates design from content (HTML)</li>
+      </ul>
+
+      <h2>Three Ways to Add CSS</h2>
+
+      <h3>1. Inline CSS</h3>
+      <p>Written directly inside the HTML tag using the style attribute.</p>
+      <pre>&lt;p style="color: blue; font-size: 18px;"&gt;Hello World&lt;/p&gt;</pre>
+
+      <h3>2. Internal CSS</h3>
+      <p>Written inside a &lt;style&gt; tag in the &lt;head&gt; section.</p>
+      <pre>
+&lt;style&gt;
+  p {
+    color: blue;
+    font-size: 18px;
+  }
+&lt;/style&gt;</pre>
+
+      <h3>3. External CSS (Best Practice)</h3>
+      <p>Written in a separate .css file and linked to the HTML file. This is the recommended method for real projects.</p>
+      <pre>&lt;link rel="stylesheet" href="style.css"&gt;</pre>
+
+      <h2>Basic CSS Example</h2>
+      <pre>
+body {
+  background-color: #f4f4f4;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #2563eb;
+  text-align: center;
+}
+
+p {
+  font-size: 16px;
+  line-height: 1.6;
+  color: #555;
+}</pre>
+
+      <h3>What this does:</h3>
+      <ul>
+        <li><strong>body</strong> - sets the background color and font for the whole page</li>
+        <li><strong>h1</strong> - makes the heading blue and centers it</li>
+        <li><strong>p</strong> - sets font size, line height and text color for paragraphs</li>
+      </ul>
+
+      <h2>The CSS Box Model</h2>
+      <p>In CSS, every HTML element is treated as a rectangular box. This box has 4 parts:</p>
+      <ul>
+        <li><strong>Content</strong> - the actual text or image</li>
+        <li><strong>Padding</strong> - space inside the border, around the content</li>
+        <li><strong>Border</strong> - the line around the padding</li>
+        <li><strong>Margin</strong> - space outside the border, between elements</li>
+      </ul>
+
+      <h2>Conclusion</h2>
+      <p>CSS is what makes websites look good. Start by experimenting with colors, fonts and margins. Once you get comfortable, move on to Flexbox and Grid for layouts!</p>
+    `,
+
+    js: `
+      <h1>💻 JavaScript Intro: Making Pages Interactive</h1>
+
+      <p>HTML gives structure, CSS gives style, but JavaScript is what makes a web page actually do something. Button clicks, pop-ups, changing content without refreshing the page — all of that is JavaScript.</p>
+
+      <h2>What is JavaScript?</h2>
+      <p>JavaScript is a programming language that runs directly in the browser. It is used to add interactivity and dynamic behavior to web pages.</p>
+
+      <h2>Adding JavaScript to Your Page</h2>
+      <p>You can write JavaScript in a &lt;script&gt; tag, usually placed at the bottom of the &lt;body&gt;.</p>
+      <pre>
+&lt;script&gt;
+  alert("Hello World!");
+&lt;/script&gt;</pre>
+
+      <p>Or in a separate file linked like this:</p>
+      <pre>&lt;script src="script.js"&gt;&lt;/script&gt;</pre>
+
+      <h2>Changing HTML Content</h2>
+      <p>You can use JavaScript to find an HTML element and change what it says.</p>
+      <pre>
+&lt;p id="demo"&gt;Old Text&lt;/p&gt;
+
+&lt;script&gt;
+  document.getElementById("demo").innerHTML = "Hello JavaScript!";
+&lt;/script&gt;</pre>
+
+      <h2>Changing Styles with JavaScript</h2>
+      <p>You can also change CSS properties using JavaScript.</p>
+      <pre>
+// increase font size
+document.getElementById("demo").style.fontSize = "30px";
+
+// change background color
+document.getElementById("demo").style.backgroundColor = "lightyellow";</pre>
+
+      <h2>Hiding and Showing Elements</h2>
+      <pre>
+// hide an element
+document.getElementById("box").style.display = "none";
+
+// show it again
+document.getElementById("box").style.display = "block";</pre>
+
+      <h2>Handling Button Clicks</h2>
+      <p>One of the most common things in JavaScript is making something happen when a button is clicked.</p>
+      <pre>
+&lt;button onclick="sayHello()"&gt;Click Me&lt;/button&gt;
+
+&lt;script&gt;
+  function sayHello() {
+    alert("Hello! You clicked the button.");
+  }
+&lt;/script&gt;</pre>
+
+      <h2>Conclusion</h2>
+      <p>JavaScript is what brings your website to life. Once you understand the basics — selecting elements, changing content, handling clicks — you can build really interactive things. Keep practicing and explore events, loops and functions next!</p>
+
+    `
+  };
+
+
+  // shows the selected page and hides all others
+  // also highlights the correct nav button
+  function showPage(pageId, btn) {
+
+    // hide all pages first
+    var pages = document.querySelectorAll('.page');
+    pages.forEach(function(page) {
+      page.classList.remove('active');
+    });
+
+    // show the page we want
+    document.getElementById(pageId).classList.add('active');
+
+    // update which nav button looks active
+    if (btn) {
+      var navBtns = document.querySelectorAll('nav button');
+      navBtns.forEach(function(b) {
+        b.classList.remove('active');
+      });
+      btn.classList.add('active');
+    }
+  }
+
+
+  // opens a blog post and loads the right content into the post section
+  function openPost(type) {
+
+    // save which page we came from so the back button works
+    var currentPage = document.querySelector('.page.active');
+    if (currentPage) {
+      lastPage = currentPage.id;
+    }
+
+    // put the post content into the post box
+    var content = postContent[type];
+    if (content) {
+      document.getElementById('postContent').innerHTML = content;
+    } else {
+      document.getElementById('postContent').innerHTML = '<p>Post not found.</p>';
+    }
+
+    showPage('post');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+
+  // goes back to the previous page (home or blogs)
+  function goBack() {
+    showPage(lastPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+
+  // filters the blog cards as the user types in the search box
+  function searchBlogs() {
+
+    var input = document.getElementById('search').value.toLowerCase();
+    var cards = document.querySelectorAll('#blogList .card');
+
+    cards.forEach(function(card) {
+      var title = card.getAttribute('data-title');
+      if (title.includes(input)) {
+        card.style.display = 'block';
+      } else {
+        card.style.display = 'none';
+      }
+    });
+  }
+
+</script>
+
+</body>
+</html>
